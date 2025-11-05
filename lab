@@ -1,27 +1,552 @@
-desc=proyecto
-desc=
-version=20230211
-force_init_vars=0
-force_define_vars=0
-force_semicolon=0
-allow_concatenation=1
-enable_string_functions=1
-word_operators=1
-base_zero_arrays=1
-allow_dinamyc_dimensions=1
-allow_resize_arrays=1
-overload_equal=1
-enable_user_functions=1
-lazy_syntax=1
-coloquial_conditions=1
-integer_only_switch=0
-deduce_negative_for_step=1
-use_nassi_shneiderman=0
-use_alternative_io_shapes=0
-allow_accents=1
-prefer_algoritmo=1
-prefer_funcion=1
-allow_repeat_while=1
-allow_for_each=1
-prefer_repeat_while=0
-protect_for_counter=0
+Algoritmo PizzeriaFinal
+	
+    Definir codigos, nombres, mesas, pedidos Como Cadena
+    Definir stock, cant_sabores, cant_vector, indice_vector Como Entero
+    Definir precios Como Real
+	Definir opcionDevuelta Como Cadena
+    //Definir opcionG, opcionE, opcionC Como Entero
+	definir perfil, usuarioCorrecto, claveCorrecta Como Cadena
+	Definir ganancias Como Real
+	Definir irMenu Como Logico
+	//irMenu = Falso
+	
+	cant_vector=10
+    Dimension codigos[cant_vector], nombres[cant_vector], mesas[cant_vector], pedidos[cant_vector], stock[cant_vector], precios[cant_vector] 
+	
+    // ----- INICIALIZACI�N DE ARRAYS -----
+	nombres[0]= "Muzarella"
+	precios[0]= 4500
+	stock[0]= 10
+	codigos[0]= "PZ1"
+	
+	nombres[1]= "Napolitana"
+	precios[1]= 5000
+	stock[1]= 10
+	codigos[1]= "PZ2"
+	
+	nombres[2]= "Fugazzeta"
+	precios[2]= 4800
+	stock[2]= 10
+	codigos[2]= "PZ3"
+	
+	nombres[3]= "Jamon y Morron"
+	precios[3]= 5200
+	stock[3]= 10
+	codigos[3]= "PZ4"
+	
+	nombres[4]= "Calabresa"
+	precios[4]= 5300
+	stock[4]= 10
+	codigos[4]= "PZ5"
+    InicializarVectores(codigos, cant_vector, nombres, cant_vector, stock, cant_vector, mesas, cant_vector, pedidos, cant_vector, precios, cant_vector)
+	
+    // ----- INICIO DEL PROGRAMA -----
+	
+    Repetir
+		opcionDevuelta= MostrarMenuPrincipal()//funcion que retorna opcionDeVuelta
+        Segun opcionDevuelta Hacer
+            "1":
+                // Login gerente
+                Limpiar Pantalla
+				perfil= "GERENTE"
+				
+                Login(usuarioCorrecto, claveCorrecta, perfil, codigos, cant_vector, nombres, cant_vector, stock, cant_vector, mesas, cant_vector, pedidos, cant_vector, precios, cant_vector, ganancias, irMenu)
+				
+            "2":
+                // Login empleado
+                Limpiar Pantalla
+				perfil= "EMPLEADO"
+				
+                Login(usuarioCorrecto, claveCorrecta, perfil, codigos, cant_vector, nombres, cant_vector, stock, cant_vector, mesas, cant_vector, pedidos, cant_vector, precios, cant_vector, ganancias, irMenu )
+				
+				
+            "3":
+                // Menu cliente
+                MenuCliente(codigos, cant_vector, nombres, cant_vector, stock, cant_vector, precios, cant_vector, ganancias, indice_vector)//agrege el vector precios para poder mostrar los precios al cliente
+				
+            "4":
+                Escribir "Gracias por visitar Pizzer�a MASA MAIN"
+                Escribir "Presione ENTER para salir..."
+                Esperar Tecla
+				
+            De Otro Modo:
+                Escribir "Opci�n inv�lida"
+                Escribir "Presione ENTER para continuar..."
+                Esperar Tecla
+        FinSegun
+		
+    Hasta Que opcionDevuelta == "4"
+	
+FinAlgoritmo
+
+// ======================== FUNCIONES Y SUBPROCESOS ========================
+
+// inicializar arrays (codigos, nombres, mesas, pedidos, stock, precios)
+SubProceso InicializarVectores(codigos, cant_vector, nombres, cant_vector, stock, cant_vector, mesas, cant_vector, pedidos, cant_vector, precios, cant_vector)
+    Para i= 0 Hasta cant_vector-1 Hacer
+        mesas[i]= ""
+        pedidos[i]= ""
+    FinPara
+	Para i= 5 Hasta cant_vector-1 Hacer
+		codigos[i]= ""
+        nombres[i]= ""
+        stock[i]= 0
+	FinPara
+FinSubProceso
+
+// Funci�n para mostrar men� principal 
+
+funcion opcionDevuelta= MostrarMenuPrincipal
+    Definir opcionDevuelta Como Cadena
+    Limpiar Pantalla
+    Escribir "=============================="
+    Escribir "**** PIZZERIA MASA MAIN ****"
+    Escribir "=============================="
+    Escribir "1. Ingresar como GERENTE"
+    Escribir "2. Ingresar como EMPLEADO"
+    Escribir "3. Ingresar como CLIENTE"
+    Escribir "4. Salir"
+    Escribir "=============================="
+    Escribir "Ingrese una opci�n (1-4):"
+    Leer opcionDevuelta
+	
+FinFuncion
+
+
+
+// Funci�n de login: recibe usuario, contrase�a y perfil, devuelve Verdadero/Falso
+SubProceso Login(usuarioCorrecto, claveCorrecta, perfil, codigos, cant_vector, nombres, cant_vector, stock, cant_vector, mesas, cant_vector, pedidos, cant_vector, precios, cant_vector, ganancias, irMenu Por Referencia)
+	Definir u, c Como Cadena
+	
+	usuarioCorrecto = "ADMIN"
+	claveCorrecta = "1234"
+	irMenu = Falso 
+	
+	Repetir
+		PedirCredenciales(u, c, perfil, usuarioCorrecto)
+		
+		Si (c == claveCorrecta) Entonces
+			ValidarLogin(perfil, codigos, cant_vector, nombres, stock, precios, ganancias, mesas, pedidos, irMenu)
+		SiNo
+			Si (u == "1" O c == "1") Entonces
+				irMenu = Verdadero
+				//Escribir "Presione ENTER para volver..."
+				//Esperar Tecla	
+			SiNo
+				MostrarMensajeError()
+			FinSi
+		FinSi
+		
+	Hasta Que irMenu
+FinSubProceso
+SubProceso PedirCredenciales(u Por Referencia, c Por Referencia, perfil, usuarioCorrecto)
+	Limpiar Pantalla
+	Escribir "==== LOGIN ", perfil, " ===="
+	Escribir "(1 para salir)"
+	Escribir "Usuario: "
+	Leer u
+	u = Mayusculas(u)
+	
+	Si u == usuarioCorrecto Entonces
+		Escribir "Contrase�a:"
+		Leer c
+		c = Mayusculas(c)
+	FinSi
+FinSubProceso
+SubProceso ValidarLogin(perfil, codigos, cant_vector, nombres, stock, precios, ganancias, mesas, pedidos, irMenu Por Referencia)
+	Si perfil == "GERENTE" Entonces
+		MenuGerente(codigos, cant_vector, nombres, cant_vector, stock, cant_vector, precios, cant_vector, ganancias, irMenu)
+	SiNo
+		Si perfil == "EMPLEADO" Entonces
+			MenuEmpleado(mesas, cant_vector, pedidos, cant_vector, codigos, cant_vector, nombres, cant_vector, stock, cant_vector, irMenu)
+		FinSi
+	FinSi
+FinSubProceso
+SubProceso MostrarMensajeError
+	Escribir "Usuario o contrase�a incorrectos"
+	Escribir "Presione ENTER para volver a intentar..."
+	//irMenu = Falso
+	Esperar Tecla	
+FinSubProceso
+// ----- MEN� DEL GERENTE -----
+Funcion MenuGerente(codigos, cant_vector, nombres, cant_vector, stock, cant_vector, precios, cant_vector, ganancias, irMenu por referencia)
+    Definir opcionG Como Entero
+    
+	//irMenu = Falso
+    Repetir
+        Limpiar Pantalla
+        Escribir "===== MEN� DEL GERENTE ====="
+        Escribir "1. Ver stock actual"
+        Escribir "2. Agregar nuevo sabor"
+		Escribir "3. Ver ganacias totales"
+		Escribir "4. Volver"
+        Escribir "Ingrese una opci�n (1-4):"
+        Leer opcionG
+		
+        Segun opcionG Hacer
+			
+            1: 
+				VerStockActual(codigos, cant_vector, nombres, cant_vector, stock, cant_vector, precios, cant_vector)
+            2: 
+				AgregarNuevoSaborYprecio(codigos, cant_vector, nombres, cant_vector, stock, cant_vector, precios, cant_vector)
+				
+			3:
+				VerGanancias(ganancias)
+			4: 
+				Escribir "Volviendo..."
+				irMenu = Verdadero
+				
+            De Otro Modo: Escribir "Opci�n inv�lida"
+        FinSegun
+    Hasta Que irMenu
+FinFuncion
+
+
+//SubProceso CargarStockInicial(cant_sabores, codigos, cant_vector, nombres, cant_vector, stock, cant_vector)
+
+//escribir "Ingrese cantidad de sabores: "
+//	leer cant_sabores
+//	Repetir
+//		Escribir "Demasiados sabores, intente de nuevo."
+//	Hasta Que cant_sabores <= 4
+//   Para i <- 5 Hasta cant_sabores-1 Hacer
+//     codigos[i]= "PZ" + ConvertirATexto(i+1)
+//        Escribir "Sabor ", i+1, ":"
+//        Leer nombres[i]
+//        Escribir "Cantidad:"
+//       Leer stock[i]
+// FinPara
+//FinSubProceso
+
+SubProceso AgregarNuevoSaborYprecio(codigos, cant_vector, nombres, cant_vector, stock, cant_vector, precios, cant_vector)
+    Definir espaciosDisponibles, saboresAagregar, i, contador Como Entero
+    
+    // Contador de espacios disponibles
+    espaciosDisponibles = 0
+    Para i = 5 Hasta cant_vector-1 Hacer
+        Si nombres[i] == "" Entonces
+            espaciosDisponibles = espaciosDisponibles + 1
+        FinSi
+    FinPara
+    
+    Si espaciosDisponibles == 0 Entonces
+        Escribir "No hay espacio para nuevos sabores."
+        Escribir "Presione ENTER para continuar..."
+        Esperar Tecla
+	FinSi
+    
+    Escribir "Espacios disponibles: ", espaciosDisponibles
+    Escribir "�Cu�ntos sabores desea agregar? (M�ximo ", espaciosDisponibles, "):"
+    Leer saboresAagregar
+    
+    // Validar que no exceda el espacio disponible
+    Si saboresAagregar > espaciosDisponibles Entonces
+        Escribir "Error: Solo hay ", espaciosDisponibles, " espacios disponibles."
+		Escribir "Solo se agregaran ", espaciosDisponibles, " sabores."
+        Escribir "Presione ENTER para continuar..."
+        Esperar Tecla
+	FinSi
+    
+    // Agregar los sabores
+    contador = 0
+    Para i = 5 Hasta cant_vector Hacer
+        Si contador < saboresAagregar Y nombres[i] == "" Entonces
+            codigos[i] = "PZ" + ConvertirATexto(i+1)
+            Escribir "Nombre del nuevo sabor ", contador+1, ":"
+            Leer nombres[i]
+            Escribir "Precio:"
+            Leer precios[i]
+            Escribir "Stock inicial:"
+            Leer stock[i]
+            
+            contador = contador + 1
+            Escribir "�Sabor agregado exitosamente!"
+			
+        FinSi
+    FinPara
+    Si saboresAagregar == 0
+		Escribir "No se desea agregar ningun sabor"
+	fin si
+    Escribir "Presione ENTER para continuar..."
+    Esperar Tecla
+FinSubProceso
+
+SubProceso VerStockActual(codigos, cant_vector, nombres, cant_vector, stock, cant_vector, precios, cant_vector)
+    Definir encontrado Como Logico
+    encontrado= Falso
+    Limpiar Pantalla
+    Escribir "===== STOCK ACTUAL ====="
+    Para i= 0 Hasta 9 Hacer
+        Si nombres[i] <> "" Entonces
+            Escribir codigos[i], " - ", nombres[i], " - $", precios[i], " (Stock: ", stock[i], ")"
+            encontrado= Verdadero
+        FinSi
+    FinPara
+    Si No encontrado Entonces
+        Escribir "No hay sabores cargados."
+    FinSi
+	Escribir "Presione ENTER para continuar..."
+	Esperar Tecla
+FinSubProceso
+
+Funcion VerGanancias(ganancias)
+    Limpiar Pantalla
+    Escribir "===== GANANCIAS ACTUALES ====="
+    Escribir "Total generado: $", ganancias
+    Escribir "Presione ENTER para continuar..."
+    Esperar Tecla
+FinFuncion
+
+// ----- MEN� DEL EMPLEADO -----
+SubProceso MenuEmpleado(mesas, cant_vector, pedidos, cant_vector, codigos, cant_vector, nombres, cant_vector, stock, cant_vector, irMenu Por Referencia)
+    Definir opcionE Como Entero
+	//irMenu = Falso
+    Repetir
+        Limpiar Pantalla
+        Escribir "===== MEN� DEL EMPLEADO ====="
+        Escribir "1. Ver mesas disponibles"
+        Escribir "2. Marcar mesa como ocupada/libre"
+        Escribir "3. Marcar pedido como listo"
+        Escribir "4. Ver stock"
+        Escribir "5. Volver"
+        Escribir "Ingrese una opci�n (1-5):"
+        Leer opcionE
+		
+        Segun opcionE Hacer
+            1: 
+				VerMesas(mesas, cant_vector)
+            2: 
+				MarcarMesa(mesas, cant_vector)
+            3: 
+				MarcarPedidoListo(pedidos, cant_vector)
+            4: 
+				VerStockEmpleado(codigos, cant_vector, nombres, cant_vector, stock, cant_vector)
+            5: 
+				Escribir "Volviendo..."
+				irMenu = Verdadero
+            De Otro Modo: Escribir "Opci�n inv�lida"
+        FinSegun
+    Hasta Que irMenu
+FinSubProceso
+
+funcion VerMesas(mesas, cant_vector)
+    Definir i Como Entero
+    Para i= 0 Hasta cant_vector-1 Hacer
+        Si mesas[i] == "" Entonces
+            Escribir "Mesa ", i+1, ": Libre"
+        Sino
+            Escribir "Mesa ", i+1, ": Ocupada"
+        FinSi
+    FinPara
+    Escribir "Presione ENTER para continuar..."
+    Esperar Tecla
+FinFuncion
+
+
+SubProceso MarcarMesa(mesas, cant_vector)
+    Definir m, estado Como Entero
+	
+    Escribir "N�mero de mesa (1-10):"
+    Leer m
+	Mientras m<1 O m>10 Hacer
+		
+		Escribir "N�mero de mesa inv�lido."
+        Escribir "Presione ENTER para volver a intentarlo..."
+		Esperar Tecla
+		Limpiar Pantalla
+		
+		escribir "N�mero de mesa (1-10):"
+		leer m
+		
+	Fin Mientras
+	
+	Escribir "1. Ocupada | 2. Libre"
+	Leer estado
+    
+	
+    Si estado == 1 Entonces
+        mesas[m-1]= "Ocupada"
+    Sino
+        mesas[m-1]= ""
+    FinSi
+FinSubProceso
+
+SubProceso MarcarPedidoListo(pedidos, cant_vector)
+    Definir p Como Entero
+    Escribir "N�mero de pedido (1-10):"
+    Leer p
+    Si p<1 O p>10 Entonces
+        Escribir "N�mero de pedido inv�lido."
+    Sino
+        pedidos[p-1]= "Listo"
+        Escribir "Pedido ", p, " marcado como listo."
+    FinSi
+	ganancias <- ganancias + precioFinal
+    Escribir "Presione ENTER para continuar..."
+    Esperar Tecla
+FinSubProceso
+
+Funcion  VerStockEmpleado(codigos, cant_vector, nombres, cant_vector, stock, cant_vector)
+    Limpiar Pantalla
+    Escribir "===== STOCK ACTUAL ====="
+    Para i= 0 Hasta 9 Hacer
+        Si nombres[i] <> "" Entonces
+            Escribir codigos[i], " - ", nombres[i], " (Stock: ", stock[i], ")"
+        FinSi
+    FinPara
+    Escribir "Presione ENTER para continuar..."
+    Esperar Tecla
+FinFuncion
+
+// ----- MEN� DEL CLIENTE -----
+SubProceso MenuCliente(codigos, cant_vector, nombres, cant_vector,  stock, cant_vector, precios, cant_vector, ganancias Por Referencia, indice_vector Por Referencia)
+    Definir opcionC Como Entero
+    Repetir
+        Limpiar Pantalla
+        Escribir "===== MEN� DEL CLIENTE ====="
+        Escribir "1. Comprar pizza"
+        Escribir "2. Volver"
+        Escribir "Ingrese una opci�n (1-2):"
+        Leer opcionC
+		
+        Segun opcionC Hacer
+            1: 
+				ComprarPizza(codigos, cant_vector, nombres, cant_vector, stock, cant_vector, precios, cant_vector, ganancias, indice_vector)
+            2: 
+				Escribir "Volviendo..."
+            De Otro Modo: Escribir "Opci�n inv�lida"
+        FinSegun
+		
+    Hasta Que opcionC == 2
+FinSubProceso
+
+SubProceso ComprarPizza(codigos, cant_vector, nombres, cant_vector, stock, cant_vector, precios, cant_vector, ganancias Por Referencia, indice_vector Por Referencia)
+    Definir codigoBuscado, aceptoJugar Como Cadena
+    Definir encontrado Como Logico
+	Definir precioFinal Como Real
+	
+    encontrado= Falso
+    Limpiar Pantalla
+    Escribir "=== COMPRA DE PIZZA ==="
+    Para i= 0 Hasta cant_vector-1 Hacer
+        Si nombres[i] <> "" Entonces
+            Escribir codigos[i], " - ", nombres[i],": " precios[i]," (Stock: ", stock[i], ")"
+        FinSi
+    FinPara
+    Escribir "Ingrese c�digo de la pizza: (por Ej: PZ1)"
+    Leer codigoBuscado
+	
+    Para i= 0 Hasta cant_vector-1 Hacer
+        Si codigos[i] == Mayusculas(codigoBuscado) Entonces
+            encontrado= Verdadero
+            Si stock[i]>0 Entonces
+				indice_vector <- i
+                stock[i]= stock[i] - 1
+                Escribir "Su orden estara lista en breve!"//, nombres[i], "!"
+				Escribir "Precio: $", precios[i]
+				Escribir "Juegos para adquirir un descuento (S/N)"
+				Leer aceptoJugar
+				aceptoJugar = Mayusculas( aceptoJugar )
+				Si aceptoJugar == "S" Entonces
+					Escribir "Elija un juego"
+					Escribir "1) Escape Room"
+					Escribir "2) Trivia"
+					Definir opc Como Entero
+					Leer opc
+					Segun opc Hacer
+						1:
+							respuesta= JuegoEscapeRoom(precios, cant_vector, indice_vector, ganancias)
+						2:
+							puntaje= TriviaPizza(precios, cant_vector, indice_vector, ganancias)
+						De Otro Modo:
+							Escribir "Volviendo..."
+					Fin Segun
+				SiNo
+					Si aceptoJugar <> "S" Entonces
+						Escribir "Presione ENTER para salir"
+						ganancias <- ganancias + precios[i]
+						Esperar Tecla
+					FinSi
+				Fin Si
+				
+				//Alerta de stock bajo
+                //Si stock[i]<=2 Entonces
+                //    Escribir "*** Quedan pocas unidades de ", nombres[i], " ***"
+                //FinSi
+            Sino
+                Escribir "Sin stock disponible."
+            FinSi
+        FinSi
+    FinPara
+    Si No encontrado Entonces
+        Escribir "C�digo no encontrado."
+    FinSi
+    Escribir "Presione ENTER para continuar..."
+    Esperar Tecla
+FinSubProceso
+
+funcion respuesta= JuegoEscapeRoom(precios, cant_vector, indice_vector Por Referencia, ganancias Por Referencia)
+    Definir respuesta Como Cadena
+	definir flag Como Logico
+	Definir precioFinal Como Real
+	flag= Falso
+    Limpiar Pantalla
+    Escribir " ESCAPE ROOM DE PIZZA "
+    Escribir "Pista: ingrediente verde, peque�o y va sobre la muzzarella."
+    Leer respuesta
+    Si Mayusculas(respuesta) == "ACEITUNA" Entonces
+        Escribir "�Correcto! Descuento del 20%!"
+		// CALCULAR PRECIO FINAL CON/SIN DESCUENTO
+			precioFinal = precios[indice_vector] - (precios[indice_vector] * 20 / 100)
+			Escribir "�Descuento del 20% aplicado!"
+			Escribir "Precio original: $", precios[indice_vector]
+			Escribir "Precio con descuento: $", precioFinal
+		
+		// Sumar a ganancias
+		ganancias = ganancias + precioFinal
+		
+		//-------------------------
+		flag <- Verdadero
+    Sino
+        Escribir "Incorrecto... atrapado entre cajas de pizza fr�as :("
+		ganancias <- ganancias + precios[indice_vector]
+    FinSi
+FinFuncion
+
+Funcion puntaje= TriviaPizza(precios, cant_vector, indice_vector Por Referencia, ganancias Por Referencia)
+    Definir puntaje, resp, precioFinal Como Entero
+    puntaje= 0
+    Limpiar Pantalla
+    Escribir " TRIVIA DE PIZZA "
+    Escribir "Ingrediente principal:"
+    Escribir "1) Pan"
+	escribir "2) Queso"
+	escribir "3) Tomate"
+    Leer resp
+    Si resp == 2 Entonces
+        puntaje= puntaje + 1
+    FinSi
+    Escribir "Pizza cl�sica italiana:"
+    Escribir "1) Napolitana"
+	escribir "2) Tropical"
+	escribir "3) Americana"
+    Leer resp
+    Si resp == 1 Entonces
+        puntaje= puntaje + 1
+    FinSi
+	Si puntaje == 2 Entonces
+		Escribir "�Correcto! Descuento del 20%!"
+		// CALCULAR PRECIO FINAL CON/SIN DESCUENTO
+		precioFinal = precios[indice_vector] - (precios[indice_vector] * 20 / 100)
+		Escribir "�Descuento del 20% aplicado!"
+		Escribir "Precio original: $", precios[indice_vector]
+		Escribir "Precio con descuento: $", precioFinal
+		
+		// Sumar a ganancias
+		ganancias = ganancias + precioFinal
+	Sino
+        Escribir "Incorrecto... :("
+		ganancias <- ganancias + precios[indice_vector]
+	FinSi
+    Escribir "Puntaje final: ", puntaje, " de 2"
+FinFuncion
